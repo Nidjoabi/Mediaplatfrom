@@ -1,20 +1,34 @@
 package handler;
 
 import Modules.User;
+import service.IUserService;
 //macht validierungen
 
 public class Userhandler {
 
-    public boolean isValid(User user){
 
-        if(user==null){
-            return true;
-        }
+    private final IUserService userService;
 
-        if(user.getPassword() == null || user.getUsername() == null) {
+    public Userhandler(IUserService userService) {
+        this.userService = userService;
+    }
+
+    public boolean validate(String username, String password) {
+
+        if (password == null || username == null) {
             return false;
         }
+        return password.isBlank();
+    }
 
-        return true;
+
+    public boolean login(String username, String password) {
+        if (validate(username, password)) return false;
+        return userService.login(username, password);
+    }
+
+    public boolean register(String username, String password, String email) {
+        if (validate(username, password)) return false;
+        return userService.register(username, password, email);
     }
 }

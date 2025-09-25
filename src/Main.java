@@ -1,21 +1,31 @@
-import Modules.User;
-import Modules.Movie;
+
+import handler.Userhandler;
+import persistence.IUserRepository;
+import persistence.UserSqlRepository;
+import service.IUserService;
+
+import service.TokenService;
+import service.UserService;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.printf("Hello and welcome!");
+
+        IUserRepository repository = UserSqlRepository.getInstance();
+        TokenService tokenService = new TokenService();
+        IUserService userService = UserService.getInstance(repository, tokenService);
+        String username = "admin";
+        String password = "password";
+        String email = "email";
+
+        Userhandler userHandler = new Userhandler(userService);
+        boolean registered = userHandler.register(username, password, email);
+        boolean loggedIn = userHandler.login(username, password);
+
+        System.out.println("registered? " + registered);
+        System.out.println("Login erfolgreich? " + loggedIn);
+
+
 
     }
-
-    User user1 = new User("nikola", "1234", "fakemail@gmail.com");
-    Movie m1 = new Movie(
-            "Inception",
-            "A mind-bending sci-fi thriller",
-            "Movie",
-            2010,
-            "Sci-Fi",
-            true,
-            "Christopher Nolan",
-            148
-    );
 
 }
