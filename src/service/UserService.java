@@ -36,8 +36,10 @@ public class UserService implements IUserService {
             User found = userRepository.getUserByUsername(username);
 
             String token = tokenService.createToken(username);
-            found.setToken(token);
+
             loggedInUsers.add(found);
+            found.setToken(token);
+
             return true;
         }
 

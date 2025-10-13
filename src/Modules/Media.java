@@ -17,4 +17,51 @@ public class Media {
         this.genre = genre;
         this.isAgeRestricted = isAgeRestricted;
     }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public void setReleaseYear(int releaseYear) {
+        this.releaseYear = releaseYear;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+    public Boolean getIsAgeRestricted() {
+        return isAgeRestricted;
+    }
+    public void setIsAgeRestricted(Boolean isAgeRestricted) {
+        this.isAgeRestricted = isAgeRestricted;
+    }
+
+
 }
