@@ -14,6 +14,10 @@ public class Game extends Media {
     public String getDeveloperStudio() {
         return developerStudio;
     }
+    public void setDeveloperStudio(String developerStudio) {
+        this.developerStudio = developerStudio;
+    }
+
 
 
 }
