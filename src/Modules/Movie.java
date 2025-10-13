@@ -10,21 +10,4 @@ public class Movie extends Media {
         this.director = director;
         this.movieLength = movieLength;
     }
-
-    public String getDirector() {
-        return director;
-    }
-
-    public void setDirector(String director) {
-        this.director = director;
-    }
-
-    public int getMovieLength() {
-        return movieLength;
-    }
-    public void setMovieLength(int movieLength) {
-        this.movieLength = movieLength;
-    }
-
-
 }

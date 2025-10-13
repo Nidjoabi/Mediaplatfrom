@@ -13,23 +13,4 @@ public class Series extends Media {
         this.seasons = seasons;
         this.episodes = episodes;
     }
-
-    public String getDirector() {
-        return director;
-    }
-    public void setDirector(String director) {
-        this.director = director;
-    }
-    public int getSeasons() {
-        return seasons;
-    }
-    public void setSeasons(int seasons) {
-        this.seasons = seasons;
-    }
-    public int getEpisodes() {
-        return episodes;
-    }
-    public void setEpisodes(int episodes) {
-        this.episodes = episodes;
-    }
 }
