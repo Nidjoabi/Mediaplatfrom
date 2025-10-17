@@ -1,8 +1,6 @@
 package service;
 
-import Modules.Game;
 import Modules.Movie;
-import persistence.IGameRepository;
 import persistence.IMovieRepository;
 
 public class MovieService implements IMovieService{

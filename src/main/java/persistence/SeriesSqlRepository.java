@@ -1,6 +1,5 @@
 package persistence;
 
-import Modules.Movie;
 import Modules.Series;
 
 import java.util.ArrayList;

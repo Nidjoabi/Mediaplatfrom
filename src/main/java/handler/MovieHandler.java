@@ -1,10 +1,8 @@
 package handler;
 
 
-import Modules.Media;
 import Modules.Movie;
 
-import service.IGameService;
 import service.IMovieService;
 
 public class MovieHandler implements IMediaHandler<Movie>{
