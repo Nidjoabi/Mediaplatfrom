@@ -22,28 +22,11 @@ public class Userhandler implements HttpHandler {
     private final UserController userController;
 
     public Userhandler(IUserService userService) {
-        this.userController = new UserController();
+        this.userController = new UserController(userService);
         this.userService = userService;
     }
 
-    public boolean validate(String username, String password) {
 
-        if (password == null || username == null) {
-            return false;
-        }
-        return !password.isBlank() && !username.isBlank();
-    }
-
-
-    public boolean login(String username, String password) {
-        if (validate(username, password)) return false;
-        return userService.login(username, password);
-    }
-
-    public boolean register(String username, String password, String email) {
-        if (validate(username, password)) return false;
-        return userService.register(username, password, email);
-    }
 
     @Override
     public void handle(HttpExchange httpExchange) {
