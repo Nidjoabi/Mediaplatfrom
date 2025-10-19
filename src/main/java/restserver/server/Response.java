@@ -27,6 +27,7 @@ public class Response {
             byte[] responseBody = content.getBytes(StandardCharsets.UTF_8);
             httpExchange.sendResponseHeaders(status, responseBody.length);
             httpExchange.getResponseBody().write(responseBody);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

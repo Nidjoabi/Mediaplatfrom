@@ -10,25 +10,32 @@ public class UserSqlRepository implements IUserRepository {
     private static final UserSqlRepository instance = new UserSqlRepository();
     public static UserSqlRepository getInstance(){return instance;}
 
-    private final List<User> users; //simulates DB
+    private final List<User> userList; //simulates DB
 
     private UserSqlRepository() {
-        users = new ArrayList<>();
+        userList = new ArrayList<>();
     }
 
     @Override
     public User createUser(String username, String password, String email) {
-        User user = new User(username, password, email);
-        users.add(user); //change to DB code
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setEmail(email);
+        userList.add(user); //change to DB code
         return user;
     }
 
     @Override
     public User getUserByUsername(String username) {
         //demo: search for user
-        return users.stream()
+        return userList.stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public List<User> getUserList() {
+        return userList;
     }
 }

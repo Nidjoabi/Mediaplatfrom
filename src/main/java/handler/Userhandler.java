@@ -1,14 +1,28 @@
 package handler;
 
+import Controller.UserController;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import org.apache.commons.io.IOUtils;
+import restserver.http.ContentType;
+import restserver.http.HttpStatus;
+import restserver.http.Method;
+import restserver.server.Request;
+import restserver.server.Response;
 import service.IUserService;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 //macht validierungen
 
-public class Userhandler {
+public class Userhandler implements HttpHandler {
 
 
     private final IUserService userService;
+    private final UserController userController;
 
     public Userhandler(IUserService userService) {
+        this.userController = new UserController();
         this.userService = userService;
     }
 
@@ -17,7 +31,7 @@ public class Userhandler {
         if (password == null || username == null) {
             return false;
         }
-        return password.isBlank();
+        return !password.isBlank() && !username.isBlank();
     }
 
 
@@ -29,5 +43,29 @@ public class Userhandler {
     public boolean register(String username, String password, String email) {
         if (validate(username, password)) return false;
         return userService.register(username, password, email);
+    }
+
+    @Override
+    public void handle(HttpExchange httpExchange) {
+        try {
+            String path = httpExchange.getRequestURI().getPath();
+            String requestBody = IOUtils.toString(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
+            Response response = null;
+
+            if (httpExchange.getRequestMethod().equals(Method.POST.name())) {
+                if (path.contains("register")) {
+                    response = this.userController.registerUser(requestBody);
+                } else if (path.contains("login")) {
+                    response = this.userController.loginUser(requestBody);
+                } else {
+                    response = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"message\":\"Endpoint not found\"}");
+                }
+            } else {
+                response = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"message\":\"Method not allowed\"}");
+            }
+            response.send(httpExchange);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
