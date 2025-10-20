@@ -45,9 +45,13 @@ public class UserService implements IUserService {
 
 
     public boolean register(String username, String password, String email) {
-
-        User user = userRepository.createUser(username, password, email);
-        return true;
+        User found = userRepository.getUserByUsername(username);
+        if (found != null) {
+            return false;
+        }else {
+            userRepository.createUser(username, password, email);
+            return true;
+        }
     }
 
     public boolean checkPassword(String username, String password) {
