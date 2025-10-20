@@ -24,12 +24,12 @@ public class UserController extends Controller {
             User user = this.getObjectMapper().readValue(requestBody, User.class);
 
 
-            if (this.userService.login(user.getUsername(), user.getPassword())) {
-
+            String token = this.userService.login(user.getUsername(), user.getPassword());
+            if(token != null) {
                 return new Response(
                         HttpStatus.OK,
                         ContentType.JSON,
-                        "{\"message\":\"Login successful\", \"username\":\"" + user.getUsername() + "\"}"
+                        "{\"message\":\"Login successful\", \"username\":\"" + user.getUsername() + ", \"token\":\""+ token + "\" }"
                 );
             } else {
                 return new Response(

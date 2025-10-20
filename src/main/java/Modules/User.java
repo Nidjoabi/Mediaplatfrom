@@ -11,6 +11,7 @@ public class User {
     private String password;
     @JsonAlias({"email"})
     private String email;
+    @JsonAlias({"token"})
     private String token;
 
     public User() {}

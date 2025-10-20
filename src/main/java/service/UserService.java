@@ -31,17 +31,16 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public boolean login(String username, String password) {
+    public String login(String username, String password) {
         if (checkPassword(username, password)) {
             User found = userRepository.getUserByUsername(username);
 
             String token = tokenService.createToken(username);
             found.setToken(token);
             loggedInUsers.add(found);
-            return true;
+            return token;
         }
-
-        return false;
+        return null;
     }
 
 
@@ -53,10 +52,10 @@ public class UserService implements IUserService {
 
     public boolean checkPassword(String username, String password) {
         User found = userRepository.getUserByUsername(username);
-        if (found != null) {
-            return found.getPassword().equals(password);
-        } else {
+        if (found == null) {
             return false;
+        } else {
+            return found.getPassword().equals(password);
         }
     }
 }
