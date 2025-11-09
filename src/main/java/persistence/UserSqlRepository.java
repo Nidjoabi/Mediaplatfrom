@@ -1,19 +1,25 @@
 package persistence;
 
 import Modules.User;
+import database.UnitOfWork;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserSqlRepository implements IUserRepository {
-
-    private static final UserSqlRepository instance = new UserSqlRepository();
-    public static UserSqlRepository getInstance(){return instance;}
+    private UnitOfWork unitOfWork;
+    private static UserSqlRepository instance = null;
+    public static UserSqlRepository getInstance(UnitOfWork unitOfWork){
+        if(instance == null){
+            instance = new UserSqlRepository(unitOfWork);
+        }
+        return instance;}
 
     private final List<User> userList; //simulates DB
 
-    private UserSqlRepository() {
+    private UserSqlRepository(UnitOfWork unitOfWork) {
         userList = new ArrayList<>();
+        this.unitOfWork = unitOfWork;
     }
 
     @Override

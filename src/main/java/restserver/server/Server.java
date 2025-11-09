@@ -4,6 +4,7 @@ package restserver.server;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
+import database.UnitOfWork;
 import handler.EchoHandler;
 import handler.Userhandler;
 import persistence.IUserRepository;
@@ -20,8 +21,9 @@ import java.util.Map;
 
 public class Server {
     public void start() throws IOException {
+        UnitOfWork unitOfWork = new UnitOfWork();
         HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-        IUserRepository repository = UserSqlRepository.getInstance();
+        IUserRepository repository = UserSqlRepository.getInstance(unitOfWork);
         TokenService tokenService = new TokenService();
         IUserService userService = UserService.getInstance(repository, tokenService);
 
