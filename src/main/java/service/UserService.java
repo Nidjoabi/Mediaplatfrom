@@ -59,7 +59,9 @@ public class UserService implements IUserService {
         if (found == null) {
             return false;
         } else {
-            return found.getPassword().equals(password);
+            return password.equals(found.getPassword());
+
+
         }
     }
 }

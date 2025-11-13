@@ -9,6 +9,4 @@ public interface IUserRepository {
 
     User getUserByUsername(String username);
 
-    List<User> getUserList();
-
 }
