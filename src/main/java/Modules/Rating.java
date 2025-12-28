@@ -1,21 +1,55 @@
 package Modules;
 
-public class Rating<T extends Media> {
+public class Rating {
 
-    T Media;
-    private int Stars;
-    private int Likes;
-    User Creator;
+    private Media media;
+    private int stars;
+    private int likes;
+    private User creator;
+    private String text;
 
-    public Rating(T Media, int Stars, int Likes) {
-        this.Media = Media;
-        this.Stars = Stars;
-        this.Likes = Likes;
+    public Rating(Media media, int stars, int likes, String text, User creator ) {
+        this.media = media;
+        this.stars = stars;
+        this.likes = likes;
+        this.text = text;
+        this.creator = creator;
     }
 
-    public T getMedia() {
-        return Media;
+    public Media getMedia() {
+        return media;
     }
+
+    public void setMedia(Media media) {
+        this.media = media;
+    }
+
+    public int getStars() {
+        return stars;
+    }
+
+    public void setStars(int stars) {
+        this.stars = stars;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+
+
 
 
 }
