@@ -1,14 +1,17 @@
 package Modules;
 
+import java.util.List;
+
 public class Series extends Media {
 
     private String director;
     private int seasons;
     private int episodes;
 
+    public Series() { super();}
 
-    public Series(String title, String description, String mediaType, int releaseYear,  String genre, Boolean isAgeRestricted, String director, int seasons, int episodes) {
-        super(title, description, mediaType, releaseYear, genre, isAgeRestricted);
+    public Series(String title, String description, String mediaType, int releaseYear, List<String> genres, int ageRestriction, String director, int seasons, int episodes) {
+        super(title, description, mediaType, releaseYear, genres, ageRestriction);
         this.director = director;
         this.seasons = seasons;
         this.episodes = episodes;

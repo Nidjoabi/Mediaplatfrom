@@ -18,10 +18,10 @@ public class MovieService implements IMovieService{
         return instance;
     }
     @Override
-    public Movie addMovie(Movie movie) {
+    public Movie addMovie(Movie movie,  long userId) {
         if (movie == null) {
-            System.out.println("Movie is null");
+            throw new IllegalArgumentException("series is null");
         }
-        return movieRepository.addMovie(movie);
+        return movieRepository.addMovie(movie, userId);
     }
 }

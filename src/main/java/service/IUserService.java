@@ -1,7 +1,9 @@
 package service;
 
+import Modules.User;
+
 public interface IUserService   {
 
     boolean register(String username, String password, String email);
-    String login(String username, String password);
+    User login(String username, String password);
 }

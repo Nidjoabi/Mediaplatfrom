@@ -1,12 +1,16 @@
 package Modules;
 
+import java.util.List;
+
 public class Movie extends Media {
 
     private String director;
     private int movieLength;
 
-    public Movie(String title, String description, String mediaType, int releaseYear,  String genre, Boolean isAgeRestricted, String director, int movieLength){
-        super(title, description, mediaType, releaseYear, genre, isAgeRestricted);
+    public Movie() { super();}
+
+    public Movie(String title, String description, String mediaType, int releaseYear, List<String> genres, int ageRestriction, String director, int movieLength){
+        super(title, description, mediaType, releaseYear, genres, ageRestriction);
         this.director = director;
         this.movieLength = movieLength;
     }

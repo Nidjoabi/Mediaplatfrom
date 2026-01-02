@@ -20,10 +20,10 @@ public class SeriesService implements ISeriesService {
         return instance;
     }
     @Override
-    public Series addSeries(Series series) {
+    public Series addSeries(Series series, long userId) {
         if (series == null) {
-            System.out.println("Series is null");
+            throw new IllegalArgumentException("series is null");
         }
-        return seriesRepository.addSeries(series);
+        return seriesRepository.addSeries(series, userId);
     }
 }

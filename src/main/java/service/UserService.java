@@ -13,32 +13,25 @@ public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
 
-    private final TokenService tokenService;
 
-    private final List<User> loggedInUsers;
-
-    private UserService(IUserRepository userRepository, TokenService tokenService) {
+    private UserService(IUserRepository userRepository) {
         this.userRepository = userRepository;
-        this.tokenService = tokenService;
-        this.loggedInUsers = new ArrayList<>();
     }
 
-    public static UserService getInstance(IUserRepository userRepository, TokenService tokenService) {
+    public static UserService getInstance(IUserRepository userRepository) {
         if (instance == null) {
-            instance = new UserService(userRepository,  tokenService);
+            instance = new UserService(userRepository);
         }
         return instance;
     }
 
     @Override
-    public String login(String username, String password) {
-        if (checkPassword(username, password)) {
-            User found = userRepository.getUserByUsername(username);
+    public User login(String username, String password) {
+        User found = userRepository.getUserByUsername(username);
+        if (found == null) return null;
 
-            String token = tokenService.createToken(username);
-            found.setToken(token);
-            loggedInUsers.add(found);
-            return token;
+        if (password.equals(found.getPassword())) {
+            return found;
         }
         return null;
     }
@@ -51,17 +44,6 @@ public class UserService implements IUserService {
         }else {
             userRepository.createUser(username, password, email);
             return true;
-        }
-    }
-
-    public boolean checkPassword(String username, String password) {
-        User found = userRepository.getUserByUsername(username);
-        if (found == null) {
-            return false;
-        } else {
-            return password.equals(found.getPassword());
-
-
         }
     }
 }

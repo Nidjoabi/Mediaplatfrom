@@ -33,7 +33,7 @@ public class UserSqlRepository implements IUserRepository {
         String sql = """ 
                 INSERT INTO users (username, password, email)
                 VALUES (?, ?, ?)
-                RETURNING user_id, username, email, token
+                RETURNING user_id, username, password, email
                 """;
         try(PreparedStatement ps = unitOfWork.prepareStatement(sql)){
 
@@ -50,7 +50,7 @@ public class UserSqlRepository implements IUserRepository {
                 return u;
             }
         } catch (SQLException ex) {
-            // 23505 = unique_violation (z. B. bei UNIQUE(email))
+            // 23505 = unique_violation (UNIQUE(email))
             if ("23505".equals(ex.getSQLState())) {
                 throw new RuntimeException("Benutzername oder E-Mail bereits vergeben.", ex);
             }
@@ -65,7 +65,6 @@ public class UserSqlRepository implements IUserRepository {
         u.setUsername(rs.getString("username"));
         u.setPassword(rs.getString("password"));
         u.setEmail(rs.getString("email"));
-        u.setToken(rs.getString("token"));
         return u;
     }
 

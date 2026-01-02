@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import persistence.UserSqlRepository;
 import restserver.http.ContentType;
 import restserver.http.HttpStatus;
+import restserver.server.Request;
 import restserver.server.Response;
+import restserver.server.SessionManager;
 import service.IUserService;
 
 import java.util.List;
@@ -23,21 +25,25 @@ public class UserController extends Controller {
         try {
             User user = this.getObjectMapper().readValue(requestBody, User.class);
 
-
-            String token = this.userService.login(user.getUsername(), user.getPassword());
-            if(token != null) {
-                return new Response(
-                        HttpStatus.OK,
-                        ContentType.JSON,
-                        "{\"message\":\"Login successful\", \"username\":\"" + user.getUsername() + ", \"token\":\""+ token + "\" }"
-                );
-            } else {
+            User found = userService.login(user.getUsername(), user.getPassword());
+            if (found == null) {
                 return new Response(
                         HttpStatus.UNAUTHORIZED,
                         ContentType.JSON,
                         "{\"message\":\"Invalid credentials\"}"
                 );
             }
+
+
+            String sessionId = SessionManager.getInstance()
+                    .createSession(found.getUser_id()).id;
+
+            return new Response(
+                    HttpStatus.OK,
+                    ContentType.JSON,
+                    "{\"message\":\"Login successful\", \"username\":\"" + found.getUsername() + "\", \"token\":\"" + sessionId + "\"}"
+            );
+
         } catch (Exception e) {
             e.printStackTrace();
             return new Response(
@@ -47,6 +53,7 @@ public class UserController extends Controller {
             );
         }
     }
+
 
     public Response registerUser(String requestBody) {
         try {

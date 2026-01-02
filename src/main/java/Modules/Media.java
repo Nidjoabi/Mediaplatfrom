@@ -1,21 +1,34 @@
 package Modules;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Media {
 
+    @JsonAlias({"title"})
     private String title;
+    @JsonAlias({"description"})
     private String description;
+    @JsonAlias({"mediaType"})
     private String mediaType;
+    @JsonAlias({"releaseYear"})
     private int releaseYear;
-    private String genre;
-    private Boolean isAgeRestricted = false;
+    @JsonAlias({"genres"})
+    private List<String> genres;
+    @JsonAlias({"ageRestriction"})
+    private int ageRestriction;
 
-    public Media(String title, String description, String mediaType, int releaseYear,  String genre, Boolean isAgeRestricted) {
+    public Media() {}
+
+    public Media(String title, String description, String mediaType, int releaseYear,  List<String> genres, int ageRestriction) {
         this.title = title;
         this.description = description;
         this.mediaType = mediaType;
         this.releaseYear = releaseYear;
-        this.genre = genre;
-        this.isAgeRestricted = isAgeRestricted;
+        this.genres = genres;
+        this.ageRestriction = ageRestriction;
     }
 
     public String getTitle() {
@@ -46,19 +59,19 @@ public class Media {
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
-    public String getGenre() {
-        return genre;
+    public List<String> getGenres() {
+        return genres;
     }
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    public Boolean getIsAgeRestricted() {
-        return isAgeRestricted;
+    public void setGenres(List<String> genres) {
+        this.genres = genres;
     }
 
-    public void setIsAgeRestricted(Boolean isAgeRestricted) {
-        this.isAgeRestricted = isAgeRestricted;
+    public int getAgeRestriction() {
+        return ageRestriction;
+    }
+
+    public void setAgeRestriction(int ageRestriction) {
+        this.ageRestriction = ageRestriction;
     }
 
 }

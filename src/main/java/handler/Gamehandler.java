@@ -12,10 +12,10 @@ public class Gamehandler implements IMediaHandler<Game> {
 
 
     @Override
-    public Game addMedia(Game mediaType){
+    public Game addMedia(Game mediaType, long userId){
 
         if(!validateMedia(mediaType))return null;
-        return gameService.addGame(mediaType);
+        return gameService.addGame(mediaType, userId);
     }
 
     @Override

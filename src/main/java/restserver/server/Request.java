@@ -59,4 +59,15 @@ public class Request {
     private void setPathParts(List<String> pathParts) {
         this.pathParts = pathParts;
     }
+
+    public String getQueryParam(String key) {
+        if (params == null || params.isBlank()) return null;
+
+        for (String pair : params.split("&")) {
+            String[] kv = pair.split("=", 2);
+            if (kv.length == 2 && kv[0].equals(key)) return kv[1];
+        }
+        return null;
+    }
+
 }

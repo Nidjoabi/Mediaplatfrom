@@ -4,5 +4,5 @@ import Modules.Game;
 
 public interface IGameRepository {
 
-    Game addGame(Game game);
+    Game addGame(Game game, long userId);
 }

@@ -18,10 +18,10 @@ public class GameService implements IGameService {
         return instance;
     }
     @Override
-    public Game addGame(Game game) {
+    public Game addGame(Game game, long userId) {
         if (game == null) {
-            System.out.println("Game is null");
+            throw new IllegalArgumentException("series is null");
         }
-        return gameRepository.addGame(game);
+        return gameRepository.addGame(game, userId);
     }
 }

@@ -4,5 +4,5 @@ package service;
 import Modules.Series;
 
 public interface ISeriesService {
-    Series addSeries(Series series);
+    Series addSeries(Series series, long userId);
 }

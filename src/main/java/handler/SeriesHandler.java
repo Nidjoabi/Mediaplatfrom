@@ -13,10 +13,10 @@ public class SeriesHandler implements IMediaHandler<Series>{
 
 
     @Override
-    public Series addMedia(Series mediaType){
+    public Series addMedia(Series mediaType, long userId){
 
         if(!validateMedia(mediaType))return null;
-        return seriesService.addSeries(mediaType);
+        return seriesService.addSeries(mediaType, userId);
     }
 
     @Override

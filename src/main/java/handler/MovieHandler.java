@@ -14,10 +14,10 @@ public class MovieHandler implements IMediaHandler<Movie>{
 
 
     @Override
-    public Movie addMedia(Movie mediaType){
+    public Movie addMedia(Movie mediaType, long userId){
 
         if(!validateMedia(mediaType))return null;
-        return movieService.addMovie(mediaType);
+        return movieService.addMovie(mediaType, userId);
     }
 
     @Override
