@@ -1,5 +1,6 @@
 package persistence;
 
+import Modules.Game;
 import Modules.Series;
 import database.UnitOfWork;
 
@@ -84,6 +85,31 @@ public class SeriesSqlRepository implements ISeriesRepository {
 
         } catch (SQLException e) {
             throw new RuntimeException("Konnte Series nicht erstellen.", e);
+        }
+    }
+
+    public boolean deleteSeries(int mediaId, long userId) {
+
+
+        String sql = """
+                DELETE FROM media
+                WHERE media_id = ? AND created_by_user_id = ?
+                RETURNING media_id
+        """;
+
+
+
+        try(PreparedStatement ps = unitOfWork.prepareStatement(sql)){
+            ps.setLong(1, mediaId);
+            ps.setLong(2, userId);
+
+            try(ResultSet rs = ps.executeQuery()){
+                boolean deleted = rs.next();
+                unitOfWork.commitTransaction();
+                return deleted;
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Konnte Series nicht gelöscht werden.", e);
         }
     }
 }

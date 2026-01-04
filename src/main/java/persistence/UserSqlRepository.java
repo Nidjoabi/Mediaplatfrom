@@ -1,15 +1,11 @@
 package persistence;
 
 import Modules.User;
-import database.DatabaseManager;
 import database.UnitOfWork;
 
-import javax.xml.crypto.Data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class UserSqlRepository implements IUserRepository {
     private UnitOfWork unitOfWork;
@@ -29,7 +25,7 @@ public class UserSqlRepository implements IUserRepository {
     }
 
     @Override
-    public User createUser(String username, String password, String email) {
+    public void createUser(String username, String password, String email) {
         String sql = """ 
                 INSERT INTO users (username, password, email)
                 VALUES (?, ?, ?)
@@ -47,7 +43,6 @@ public class UserSqlRepository implements IUserRepository {
                 }
                 unitOfWork.commitTransaction();
                 User u = getUser(rs);
-                return u;
             }
         } catch (SQLException ex) {
             // 23505 = unique_violation (UNIQUE(email))

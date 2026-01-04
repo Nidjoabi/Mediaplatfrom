@@ -3,27 +3,32 @@ package Controller;
 import Modules.Movie;
 import Modules.Series;
 import Modules.Game;
-import Modules.User;
 import com.fasterxml.jackson.databind.JsonNode;
 import restserver.http.ContentType;
 import restserver.http.HttpStatus;
 import restserver.server.Response;
 import service.IGameService;
+import service.IMediaService;
 import service.IMovieService;
 import service.ISeriesService;
 
-import java.util.Locale;
-
 public class MediaController extends Controller{
 
-    private ISeriesService seriesService;
-    private IMovieService movieService;
-    private IGameService gameService;
+    private final IMovieService movieService;
+    private final ISeriesService seriesService;
+    private final IGameService gameService;
+    private final IMediaService mediaService;
 
-    public MediaController(ISeriesService seriesService, IMovieService movieService, IGameService gameService) {
-        this.seriesService = seriesService;
+
+    public MediaController(IMovieService movieService,
+                           ISeriesService seriesService,
+                           IGameService gameService,
+                           IMediaService mediaService) {
         this.movieService = movieService;
+        this.seriesService = seriesService;
         this.gameService = gameService;
+        this.mediaService = mediaService;
+
     }
 
     public Response addMedia(String requestBody, long userId) {
@@ -67,4 +72,32 @@ public class MediaController extends Controller{
             );
         }
     };
+
+    public Response deleteMedia(int mediaId, long userId) {
+        try {
+            if (mediaId <= 0) {
+                return new Response(HttpStatus.BAD_REQUEST, ContentType.JSON,
+                        "{\"message\":\"mediaId is required\"}");
+            }
+
+            boolean deleted = mediaService.deleteMedia(mediaId, userId);
+
+            if (deleted) {
+                return new Response(HttpStatus.OK, ContentType.JSON,
+                        "{\"message\":\"Deleted\"}");
+            } else {
+                return new Response(HttpStatus.NOT_FOUND, ContentType.JSON,
+                        "{\"message\":\"Not found or not owner\"}");
+            }
+
+        } catch (IllegalArgumentException e) {
+            return new Response(HttpStatus.BAD_REQUEST, ContentType.JSON,
+                    "{\"message\":\"" + e.getMessage() + "\"}");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.JSON,
+                    "{\"message\":\"Error processing request\"}");
+        }
+    }
+
 }

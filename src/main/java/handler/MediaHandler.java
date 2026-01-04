@@ -27,14 +27,8 @@ public class MediaHandler implements HttpHandler {
         Response response;
 
         try {
-            if (!httpExchange.getRequestMethod().equals(Method.POST.name())) {
-                response = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"message\":\"Method not allowed\"}");
-                response.send(httpExchange);
-                return;
-            }
-
-            // ✅ sessionId aus Query holen
-            String query = httpExchange.getRequestURI().getQuery(); // z.B. "sessionId=abc"
+            // ✅ Session prüfen (für POST + DELETE)
+            String query = httpExchange.getRequestURI().getQuery();
             String sessionId = getQueryParam(query, "sessionId");
 
             var session = SessionManager.getInstance().getValidSession(sessionId);
@@ -43,20 +37,44 @@ public class MediaHandler implements HttpHandler {
                 response.send(httpExchange);
                 return;
             }
+            long userId = session.userId;
 
-            long userId = session.userId; // ✅ Ersteller
 
-            String requestBody = IOUtils.toString(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
+            String method = httpExchange.getRequestMethod();
 
-            // ✅ jetzt musst du userId weitergeben (siehe Schritt 2)
-            response = mediaController.addMedia(requestBody, userId );
+            if (method.equals(Method.POST.name())) {
+                String requestBody = IOUtils.toString(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
+                response = mediaController.addMedia(requestBody, userId);
 
+            } else if (method.equals(Method.DELETE.name())) {
+
+                String path = httpExchange.getRequestURI().getPath(); // z.B. /api/media/1
+                int mediaId = extractLastPathInt(path);
+
+                if (mediaId <= 0) {
+                    response = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"message\":\"mediaId is required\"}");
+                } else {
+                    response = mediaController.deleteMedia(mediaId, userId);
+                }
+
+            } else {
+                response = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"message\":\"Method not allowed\"}");
+            }
+
+        } catch (NumberFormatException e) {
+            response = new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "{\"message\":\"Invalid mediaId\"}");
         } catch (Exception e) {
             e.printStackTrace();
             response = new Response(HttpStatus.INTERNAL_SERVER_ERROR, ContentType.JSON, "{\"message\":\"Error processing request\"}");
         }
 
         response.send(httpExchange);
+    }
+
+    private int extractLastPathInt(String path) {
+        if (path == null || path.isBlank()) return -1;
+        String[] parts = path.split("/");
+        return Integer.parseInt(parts[parts.length - 1]);
     }
 
     private String getQueryParam(String query, String key) {

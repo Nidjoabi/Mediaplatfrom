@@ -26,6 +26,7 @@ public class GameSqlRepository implements IGameRepository {
     }
 
 
+
     @Override
     public Game addGame(Game game, long userId) {
 
@@ -79,6 +80,30 @@ public class GameSqlRepository implements IGameRepository {
 
         }catch(SQLException e){
             throw new RuntimeException("Konnte Series nicht erstellen.", e);
+        }
+    }
+
+    public boolean deleteGame(int mediaId, long userId) {
+
+        String sql = """
+                DELETE FROM media
+                WHERE media_id = ? AND created_by_user_id = ?
+                RETURNING media_id
+        """;
+
+
+
+        try(PreparedStatement ps = unitOfWork.prepareStatement(sql)){
+            ps.setLong(1, mediaId);
+            ps.setLong(2, userId);
+
+            try(ResultSet rs = ps.executeQuery()){
+                boolean deleted = rs.next();
+                unitOfWork.commitTransaction();
+                return deleted;
+            }
+        }catch (SQLException e){
+            throw new RuntimeException("Konnte Movie nicht gelöscht werden.", e);
         }
     }
 }

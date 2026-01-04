@@ -1,12 +1,15 @@
 package Modules;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Media {
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private long mediaId;
     @JsonAlias({"title"})
     private String title;
     @JsonAlias({"description"})
@@ -73,5 +76,15 @@ public class Media {
     public void setAgeRestriction(int ageRestriction) {
         this.ageRestriction = ageRestriction;
     }
+
+    public long getMediaId() {
+        return mediaId;
+    }
+    public void setMediaId(long mediaId) {
+        this.mediaId = mediaId;
+    }
+
+
+
 
 }

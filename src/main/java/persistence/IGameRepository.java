@@ -5,4 +5,5 @@ import Modules.Game;
 public interface IGameRepository {
 
     Game addGame(Game game, long userId);
+    boolean deleteGame(int mediaId, long userId);
 }

@@ -19,9 +19,12 @@ public class MovieService implements IMovieService{
     }
     @Override
     public Movie addMovie(Movie movie,  long userId) {
-        if (movie == null) {
-            throw new IllegalArgumentException("series is null");
-        }
         return movieRepository.addMovie(movie, userId);
+    }
+
+    @Override
+    public boolean deleteMovie(int mediaId, long userId) {
+        if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
+        return movieRepository.deleteMovie(mediaId, userId);
     }
 }

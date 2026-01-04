@@ -2,14 +2,14 @@ package restserver.server;
 
 
 import Controller.MediaController;
+import Modules.Game;
+import Modules.Movie;
+import Modules.Series;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import database.UnitOfWork;
-import handler.EchoHandler;
-import handler.IMediaHandler;
-import handler.MediaHandler;
-import handler.Userhandler;
+import handler.*;
 import persistence.*;
 import service.*;
 
@@ -31,14 +31,20 @@ public class Server {
         IMovieService movieService = MovieService.getInstance(movieRepository);
         IGameRepository gameRepository = GameSqlRepository.getInstance(unitOfWork);
         IGameService gameService = GameService.getInstance(gameRepository);
-        MediaController mediaController = new MediaController(seriesService, movieService, gameService);
+        IMediaRepository mediaRepository = MediaSqlRepository.getInstance(unitOfWork);
+        IMediaService mediaService = MediaService.getInstance(mediaRepository, gameService, seriesService, movieService);
+
+
+        MediaController mediaController = new MediaController(movieService, seriesService, gameService, mediaService );
+
+        MediaHandler mediaHandler = new MediaHandler(mediaController);
 
 
 
         server.createContext("/", new EchoHandler());
         server.createContext("/api/users/register", new Userhandler(userService));
         server.createContext("/api/users/login", new Userhandler(userService));
-        server.createContext("/api/media", new MediaHandler(mediaController));
+        server.createContext("/api/media", mediaHandler);
 
 
         server.setExecutor(null);

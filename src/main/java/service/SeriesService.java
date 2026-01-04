@@ -21,9 +21,13 @@ public class SeriesService implements ISeriesService {
     }
     @Override
     public Series addSeries(Series series, long userId) {
-        if (series == null) {
-            throw new IllegalArgumentException("series is null");
-        }
+
         return seriesRepository.addSeries(series, userId);
+    }
+
+    @Override
+    public boolean deleteSeries( int mediaId, long userId) {
+        if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
+        return seriesRepository.deleteSeries(mediaId, userId);
     }
 }
