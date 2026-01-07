@@ -28,15 +28,20 @@ public class Server {
 
         ISeriesRepository seriesRepository = SeriesSqlRepository.getInstance(unitOfWork);
         ISeriesService seriesService = SeriesService.getInstance(seriesRepository);
+
         IMovieRepository movieRepository = MovieSqlRepository.getInstance(unitOfWork);
         IMovieService movieService = MovieService.getInstance(movieRepository);
+
         IGameRepository gameRepository = GameSqlRepository.getInstance(unitOfWork);
         IGameService gameService = GameService.getInstance(gameRepository);
+
         IMediaRepository mediaRepository = MediaSqlRepository.getInstance(unitOfWork);
         IMediaService mediaService = MediaService.getInstance(mediaRepository, gameService, seriesService, movieService);
+
         IRatingRepository ratingRepo = RatingSqlRepository.getInstance(unitOfWork);
         IRatingService ratingService = RatingService.getInstance(ratingRepo);
         RatingController ratingController = new RatingController(ratingService);
+
         IFavoritesRepository favoritesRepository = FavoritesSqlRepository.getInstance(unitOfWork);
         IFavoritesService favoritesService = FavoritesService.getInstance(favoritesRepository);
         ILeaderboardRepository leaderboardRepository = LeaderboardSqlRepository.getInstance(unitOfWork);

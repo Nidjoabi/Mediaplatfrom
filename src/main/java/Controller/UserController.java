@@ -1,6 +1,7 @@
 package Controller;
 
 import Modules.User;
+import Modules.UserProfileDto;
 import restserver.http.ContentType;
 import restserver.http.HttpStatus;
 import restserver.server.Response;
@@ -93,7 +94,7 @@ public class UserController extends Controller {
                 );
             }
 
-            User profile = userService.getProfile(userId);
+            UserProfileDto profile = userService.getProfile(userId);
 
             if (profile == null) {
                 return new Response(

@@ -1,6 +1,7 @@
 package persistence;
 
 import Modules.User;
+import Modules.UserProfileDto;
 import database.UnitOfWork;
 
 import java.sql.PreparedStatement;
@@ -85,34 +86,43 @@ public class UserSqlRepository implements IUserRepository {
     }
 
     @Override
-    public User getProfile(long userId) {
+    public UserProfileDto getProfile(long userId) {
+        if (userId <= 0) throw new IllegalArgumentException("userId is missing");
+
         String sql = """
-                SELECT user_id, username, email
-                FROM users
-                WHERE  user_id = ?;
+        SELECT
+            u.user_id   AS "userId",
+            u.username  AS "userName",
+            u.email     AS "userEmail",
+            COUNT(r.rating_id) AS "totalRatings",
+            COALESCE(ROUND(AVG(r.stars)::numeric, 2), 0) AS "averageRating"
+        FROM users u
+        LEFT JOIN ratings r
+            ON r.creator_user_id = u.user_id
+           AND r.confirmed = true
+        WHERE u.user_id = ?
+        GROUP BY u.user_id, u.username, u.email
         """;
 
         try (PreparedStatement ps = unitOfWork.prepareStatement(sql)) {
             ps.setLong(1, userId);
 
             try (ResultSet rs = ps.executeQuery()) {
-                if (!rs.next()) {
-                    return null;
-                }
+                if (!rs.next()) return null;
 
-                User u = new User();
-                u.setUser_id(rs.getInt("user_id"));     // oder setUserId(...) je nach deinem Model
-                u.setUsername(rs.getString("username"));
-                u.setEmail(rs.getString("email"));
-
-                return u;
+                UserProfileDto dto = new UserProfileDto();
+                dto.setUserId(rs.getLong("userId"));
+                dto.setUserName(rs.getString("userName"));
+                dto.setUserEmail(rs.getString("userEmail"));
+                dto.setTotalRatings(rs.getInt("totalRatings"));
+                dto.setAverageRating(rs.getDouble("averageRating"));
+                return dto;
             }
-
         } catch (SQLException e) {
             throw new RuntimeException("Konnte Profil nicht laden.", e);
         }
-
     }
+
 
     @Override
     public User updateProfile(long userId, User user){

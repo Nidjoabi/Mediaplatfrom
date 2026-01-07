@@ -14,7 +14,7 @@ public class MediaDto {
     private int ratingCount;
     private double score;
 
-    // optional details (je nach type)
+    // details (je nach type)
     private String studio;        // game
     private String director;      // movie/series
     private Integer movieLength;  // movie

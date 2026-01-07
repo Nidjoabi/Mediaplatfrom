@@ -2,6 +2,8 @@ package service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import Modules.UserProfileDto;
 import persistence.IUserRepository;
 import Modules.User;
 
@@ -48,7 +50,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User getProfile(long userId) {
+    public UserProfileDto getProfile(long userId) {
         if(userId <= 0) return null;
         return userRepository.getProfile(userId);
     }
