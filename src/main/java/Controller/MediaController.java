@@ -179,7 +179,7 @@ public class MediaController extends Controller{
     public Response addFavorite(long userId, int mediaId) {
         try {
             boolean created = favoritesService.addFavorite(userId, mediaId);
-            // created=false bedeutet: war schon Favorit
+
             return new Response(HttpStatus.OK, ContentType.JSON,
                     created ? "{\"message\":\"favorited\"}" : "{\"message\":\"already favorited\"}");
         } catch (IllegalArgumentException e) {

@@ -10,6 +10,6 @@ public interface IUserRepository {
     User getUserByUsername(String username);
     UserProfileDto getProfile(long userId);
     User updateProfile(long userId, User user);
-    //List<String> getUserFavorites(long userId);
+
 
 }

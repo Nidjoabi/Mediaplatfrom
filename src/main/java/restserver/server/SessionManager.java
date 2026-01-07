@@ -51,7 +51,4 @@ public class SessionManager {
         return s;
     }
 
-    public void invalidate(String sessionId) {
-        if (sessionId != null) sessions.remove(sessionId);
-    }
 }

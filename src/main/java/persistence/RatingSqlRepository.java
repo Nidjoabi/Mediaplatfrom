@@ -1,5 +1,6 @@
 package persistence;
 
+import Modules.MediaDto;
 import Modules.Rating;
 import Modules.RatingDto;
 import database.UnitOfWork;
@@ -119,7 +120,7 @@ public class RatingSqlRepository implements IRatingRepository{
             try (ResultSet rs = ps.executeQuery()) {
                 if (!rs.next()) {
                     unitOfWork.rollbackTransaction();
-                    return null; // nicht gefunden / nicht owner / schon confirmed
+                    return null;
                 }
                 updatedId = rs.getLong("rating_id");
             }
@@ -196,13 +197,12 @@ public class RatingSqlRepository implements IRatingRepository{
                 try (ResultSet rs = ps2.executeQuery()) {
                     if (!rs.next()) {
                         unitOfWork.rollbackTransaction();
-                        return null; // rating existiert nicht
+                        return null;
                     }
                     updatedId = rs.getLong("rating_id");
                 }
             }
 
-            // 3) Rating zurückgeben
             try (PreparedStatement ps3 = unitOfWork.prepareStatement(sqlFetch)) {
                 ps3.setLong(1, updatedId);
 
@@ -316,16 +316,17 @@ public class RatingSqlRepository implements IRatingRepository{
                 List<RatingDto> list = new ArrayList<>();
 
                 while (rs.next()) {
-                    int stars = rs.getInt("stars");
-                    String comment = rs.getString("text");
-                    int likes = rs.getInt("likes");
-                    String mediaTitle = rs.getString("media_title");
-                    String mediaType = rs.getString("media_type");
+                    RatingDto dto = new RatingDto();
+                    dto.setStars(rs.getInt("stars"));
+                    dto.setComment(rs.getString("text"));
+                    dto.setLikes(rs.getInt("likes"));
+                    dto.setMediaTitle(rs.getString("media_title"));
+                    dto.setMediaType(rs.getString("media_type"));
 
-                    list.add(new RatingDto(stars, comment, likes, mediaTitle, mediaType));
+                    list.add(dto);
                 }
 
-                return list; // leer wenn nicht owner oder nicht gefunden
+                return list;
             }
         } catch (SQLException e) {
             throw new RuntimeException("Konnte Rating nicht laden.", e);

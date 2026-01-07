@@ -45,7 +45,7 @@ public class RatingHandler implements HttpHandler {
                 String[] parts = path.split("/");
                 int mediaId = Integer.parseInt(parts[4]);
 
-                System.out.println("RATE mediaId=" + mediaId); // Debug!
+                System.out.println("RATE mediaId=" + mediaId); // Debug
 
                 String body = IOUtils.toString(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
                 response = ratingController.addRating(mediaId, userId, body);

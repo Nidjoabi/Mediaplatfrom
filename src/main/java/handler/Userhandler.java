@@ -29,7 +29,7 @@ public class Userhandler implements HttpHandler {
             String path = httpExchange.getRequestURI().getPath();
             String method = httpExchange.getRequestMethod();
 
-            // ✅ 1) PUBLIC: register/login (kein Session-Check!)
+
             if (method.equals(Method.POST.name())) {
                 String requestBody = IOUtils.toString(httpExchange.getRequestBody(), StandardCharsets.UTF_8);
 

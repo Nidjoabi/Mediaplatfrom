@@ -147,7 +147,7 @@ public class MovieSqlRepository implements IMovieRepository{
             try (ResultSet rsMedia = psMedia.executeQuery()) {
                 if (!rsMedia.next()) {
                     unitOfWork.rollbackTransaction();
-                    return null; // not found / not owner
+                    return null;
                 }
                 updatedMediaId = rsMedia.getLong("media_id");
             }

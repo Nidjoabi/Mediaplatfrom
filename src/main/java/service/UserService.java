@@ -7,7 +7,6 @@ import Modules.UserProfileDto;
 import persistence.IUserRepository;
 import Modules.User;
 
-//regelt die Logik
 public class UserService implements IUserService {
 
 

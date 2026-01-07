@@ -44,4 +44,20 @@ public class MediaDto {
     public void setMovieLength(Integer movieLength) { this.movieLength = movieLength; }
     public void setSeasons(Integer seasons) { this.seasons = seasons; }
     public void setEpisodes(Integer episodes) { this.episodes = episodes; }
+
+    public String getTitle() { return title; }
+    public String getDescription() { return description; }
+    public int getReleaseYear() { return releaseYear; }
+    public List<String> getGenres() { return genres; }
+    public int getAgeRestriction() { return ageRestriction; }
+    public int getMediaId() { return mediaId; }
+    public int getRatingCount() { return ratingCount; }
+    public double getScore() { return score; }
+
+    public String getStudio() { return studio; }
+    public String getDirector() { return director; }
+    public Integer getMovieLength() { return movieLength; }
+    public Integer getSeasons() { return seasons; }
+    public Integer getEpisodes() { return episodes; }
+
 }

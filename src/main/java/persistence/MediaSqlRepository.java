@@ -110,10 +110,10 @@ public class MediaSqlRepository implements IMediaRepository {
     """);
 
         List<Object> params = new ArrayList<>();
-        // Marker für Genre-Array
+
         List<String> genreList = null;
 
-        // --- Filter ---
+
         if (title != null && !title.isBlank()) {
             sql.append(" AND LOWER(m.title) LIKE LOWER(?) ");
             params.add("%" + title.trim() + "%");
@@ -134,7 +134,7 @@ public class MediaSqlRepository implements IMediaRepository {
             params.add(ageRestriction);
         }
 
-        // --- Genres: "sci-fi,thriller" => m.genres @> ? (text[])
+
         if (genre != null && !genre.isBlank()) {
             genreList = new ArrayList<>();
             for (String g : genre.split(",")) {
@@ -143,11 +143,11 @@ public class MediaSqlRepository implements IMediaRepository {
             }
             if (!genreList.isEmpty()) {
                 sql.append(" AND m.genres @> ? ");
-                params.add("__GENRE_ARRAY__"); // Platzhalter
+                params.add("__GENRE_ARRAY__");
             }
         }
 
-        // --- GROUP BY ---
+
         sql.append("""
         GROUP BY
             m.media_id, m.title, m.description, m.media_type, m.release_year, m.genres, m.age_restriction,
@@ -156,7 +156,7 @@ public class MediaSqlRepository implements IMediaRepository {
             sd.director, sd.seasons, sd.episodes
     """);
 
-        // --- Sort ---
+
         String order;
         if ("score".equalsIgnoreCase(sortBy)) {
             order = " ORDER BY avg_score DESC, rating_count DESC, m.title ASC ";
@@ -169,7 +169,7 @@ public class MediaSqlRepository implements IMediaRepository {
         }
         sql.append(order);
 
-        // --- Execute ---
+
         try (PreparedStatement ps = unitOfWork.prepareStatement(sql.toString())) {
 
             int idx = 1;
@@ -177,7 +177,7 @@ public class MediaSqlRepository implements IMediaRepository {
                 if (p instanceof Integer i) {
                     ps.setInt(idx++, i);
                 } else if (p instanceof String s && "__GENRE_ARRAY__".equals(s)) {
-                    // Genre-Array setzen
+
                     var arr = ps.getConnection().createArrayOf("text", genreList.toArray(new String[0]));
                     ps.setArray(idx++, arr);
                 } else {
@@ -198,7 +198,7 @@ public class MediaSqlRepository implements IMediaRepository {
                     dto.setReleaseYear(rs.getInt("release_year"));
                     dto.setAgeRestriction(rs.getInt("age_restriction"));
 
-                    // genres: text[]
+
                     var genresArr = rs.getArray("genres");
                     if (genresArr != null) {
                         String[] g = (String[]) genresArr.getArray();
@@ -207,11 +207,11 @@ public class MediaSqlRepository implements IMediaRepository {
                         dto.setGenres(java.util.List.of());
                     }
 
-                    // score meta
+
                     dto.setScore(rs.getDouble("avg_score"));
                     dto.setRatingCount(rs.getInt("rating_count"));
 
-                    // details nach Typ
+
                     String t = dto.getMediaType() == null ? "" : dto.getMediaType().toLowerCase();
                     if ("game".equals(t)) {
                         dto.setStudio(rs.getString("studio"));
