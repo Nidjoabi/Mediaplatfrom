@@ -1,24 +1,24 @@
 package Controller;
 
 import Modules.User;
-import com.fasterxml.jackson.annotation.JsonAlias;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import persistence.UserSqlRepository;
 import restserver.http.ContentType;
 import restserver.http.HttpStatus;
-import restserver.server.Request;
 import restserver.server.Response;
 import restserver.server.SessionManager;
+import service.IFavoritesService;
+import service.IRatingService;
 import service.IUserService;
-
-import java.util.List;
 
 public class UserController extends Controller {
     private IUserService userService;
+    private IFavoritesService favoritesService;
+    private IRatingService ratingService;
 
-    public UserController(IUserService userService) {
+    public UserController(IUserService userService, IFavoritesService favoritesService, IRatingService ratingService) {
         this.userService = userService;
+        this.favoritesService = favoritesService;
+        this.ratingService = ratingService;
+
     }
 
     public Response loginUser(String requestBody) {
@@ -82,6 +82,162 @@ public class UserController extends Controller {
             );
         }
     }
+
+    public Response getProfile(long userId) {
+        try {
+            if (userId <= 0) {
+                return new Response(
+                        HttpStatus.BAD_REQUEST,
+                        ContentType.JSON,
+                        "{\"message\":\"userId is required\"}"
+                );
+            }
+
+            User profile = userService.getProfile(userId);
+
+            if (profile == null) {
+                return new Response(
+                        HttpStatus.NOT_FOUND,
+                        ContentType.JSON,
+                        "{\"message\":\"User not found\"}"
+                );
+            }
+
+            return new Response(
+                    HttpStatus.OK,
+                    ContentType.JSON,
+                    getObjectMapper().writeValueAsString(profile)
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ContentType.JSON,
+                    "{\"message\":\"Error processing request\"}"
+            );
+        }
+    }
+
+    public Response updateProfile(long userId, String requestBody) {
+        try {
+            if (userId <= 0) {
+                return new Response(
+                        HttpStatus.BAD_REQUEST,
+                        ContentType.JSON,
+                        "{\"message\":\"Not logged in\"}"
+                );
+            }
+
+            if (requestBody == null || requestBody.isBlank()) {
+                return new Response(
+                        HttpStatus.BAD_REQUEST,
+                        ContentType.JSON,
+                        "{\"message\":\"Body is required\"}"
+                );
+            }
+
+            User in = getObjectMapper().readValue(requestBody, User.class);
+
+            if (in == null) {
+                return new Response(
+                        HttpStatus.NOT_FOUND,
+                        ContentType.JSON,
+                        "{\"message\":\"User is required\"}"
+                );
+            }
+
+            User updated = userService.updateProfile(userId, in);
+
+            if (updated == null) {
+                return new Response(
+                        HttpStatus.NOT_FOUND,
+                        ContentType.JSON,
+                        "{\"message\":\"User not found\"}"
+                );
+            }
+
+            return new Response(
+                    HttpStatus.OK,
+                    ContentType.JSON,
+                    getObjectMapper().writeValueAsString(updated)
+            );
+
+        } catch (IllegalArgumentException e) {
+            return new Response(
+                    HttpStatus.BAD_REQUEST,
+                    ContentType.JSON,
+                    "{\"message\":\"" + e.getMessage() + "\"}"
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ContentType.JSON,
+                    "{\"message\":\"Error processing request\"}"
+            );
+        }
+    }
+
+    public Response getFavorites(long userId) {
+        try {
+            if (userId <= 0) {
+                return new Response(
+                        HttpStatus.BAD_REQUEST,
+                        ContentType.JSON,
+                        "{\"message\":\"Not logged in\"}"
+                );
+            }
+
+            var favorites = favoritesService.getFavorites(userId);
+
+            return new Response(
+                    HttpStatus.OK,
+                    ContentType.JSON,
+                    getObjectMapper().writeValueAsString(favorites)
+            );
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ContentType.JSON,
+                    "{\"message\":\"Error processing request\"}"
+            );
+        }
+
+    }
+
+    public Response getRatingIfOwned(long userId){
+        try {
+            if (userId <= 0) {
+                return new Response(
+                        HttpStatus.BAD_REQUEST,
+                        ContentType.JSON,
+                        "{\"message\":\"Not logged in\"}"
+                );
+            }
+
+
+            var ratings = ratingService.getRatingIfOwned(userId);
+
+            return new Response(
+                    HttpStatus.OK,
+                    ContentType.JSON,
+                    getObjectMapper().writeValueAsString(ratings)
+            );
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            return new Response(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    ContentType.JSON,
+                    "{\"message\":\"Error processing request\"}"
+            );
+        }
+    }
+
+
 }
 
 

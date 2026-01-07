@@ -36,7 +36,7 @@ public class UserService implements IUserService {
         return null;
     }
 
-
+    @Override
     public boolean register(String username, String password, String email) {
         User found = userRepository.getUserByUsername(username);
         if (found != null) {
@@ -45,5 +45,18 @@ public class UserService implements IUserService {
             userRepository.createUser(username, password, email);
             return true;
         }
+    }
+
+    @Override
+    public User getProfile(long userId) {
+        if(userId <= 0) return null;
+        return userRepository.getProfile(userId);
+    }
+
+    @Override
+    public User updateProfile(long userId, User user) {
+        if(userId <= 0) return null;
+        if(user == null) return null;
+        return userRepository.updateProfile(userId, user);
     }
 }

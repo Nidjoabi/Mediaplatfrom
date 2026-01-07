@@ -1,5 +1,6 @@
 package service;
 
+import Modules.Game;
 import Modules.Movie;
 import persistence.IMovieRepository;
 
@@ -27,4 +28,18 @@ public class MovieService implements IMovieService{
         if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
         return movieRepository.deleteMovie(mediaId, userId);
     }
+
+    @Override
+    public Movie updateMovie(int mediaId,Movie movie, long userId) {
+        if(movie == null) throw new IllegalArgumentException("movie is null");
+        return movieRepository.updateMovie(mediaId, movie, userId);
+
+    }
+
+    @Override
+    public Movie getMovieById(int mediaId) {
+        if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
+        return movieRepository.getMovieById(mediaId);
+    }
+
 }

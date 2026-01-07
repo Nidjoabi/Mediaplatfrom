@@ -11,8 +11,7 @@ public class User {
     private String password;
     @JsonAlias({"email"})
     private String email;
-    @JsonAlias({"token"})
-    private String token;
+
     private int user_id;
 
     public User() {}
@@ -24,12 +23,6 @@ public class User {
     }
     public void setUsername(String username) {
         this.username = username;
-    }
-    public String getToken() {
-        return token;
-    }
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public String getPassword() {

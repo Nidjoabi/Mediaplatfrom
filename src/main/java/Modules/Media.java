@@ -22,6 +22,8 @@ public class Media {
     private List<String> genres;
     @JsonAlias({"ageRestriction"})
     private int ageRestriction;
+    @JsonAlias
+    private boolean isFavorite = false;
 
     public Media() {}
 
@@ -83,8 +85,6 @@ public class Media {
     public void setMediaId(long mediaId) {
         this.mediaId = mediaId;
     }
-
-
-
-
+    public boolean isFavorite() { return isFavorite; }
+    public void setFavorite(boolean isFavorite) { this.isFavorite = isFavorite; }
 }

@@ -1,6 +1,7 @@
 package service;
 
 
+import Modules.Game;
 import Modules.Series;
 import persistence.ISeriesRepository;
 
@@ -29,5 +30,17 @@ public class SeriesService implements ISeriesService {
     public boolean deleteSeries( int mediaId, long userId) {
         if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
         return seriesRepository.deleteSeries(mediaId, userId);
+    }
+
+    @Override
+    public Series updateSeries(int mediaId, Series series, long userId) {
+        if (series == null) throw new IllegalArgumentException("series is null");
+        return seriesRepository.updateSeries(mediaId, series, userId);
+    }
+
+    @Override
+    public Series getSeriesById(int mediaId) {
+        if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
+        return seriesRepository.getSeriesById(mediaId);
     }
 }

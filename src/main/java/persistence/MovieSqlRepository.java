@@ -4,10 +4,12 @@ import Modules.Game;
 import Modules.Movie;
 import database.UnitOfWork;
 
+import java.sql.Array;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MovieSqlRepository implements IMovieRepository{
@@ -105,6 +107,121 @@ public class MovieSqlRepository implements IMovieRepository{
             }
         }catch (SQLException e){
             throw new RuntimeException("Konnte Movie nicht gelöscht werden.", e);
+        }
+    }
+
+    @Override
+    public Movie updateMovie(int mediaId, Movie movie, long userId) {
+        if (movie == null) {
+            throw new IllegalArgumentException("movie is null");
+        }
+
+        String sqlMedia = """
+                UPDATE media
+                SET title = ?, description = ?, media_type = ?, release_year = ?, genres = ?, age_restriction = ?
+                WHERE media_id = ? AND created_by_user_id = ?
+                RETURNING media_id;
+                """;
+
+        String sqlMovie = """
+                UPDATE movie_details
+                SET director = ?,
+                    movie_length = ?
+                WHERE movie_id = ?
+                """;
+        try (PreparedStatement psMedia = unitOfWork.prepareStatement(sqlMedia)) {
+            psMedia.setString(1, movie.getTitle());
+            psMedia.setString(2, movie.getDescription());
+            psMedia.setString(3, movie.getMediaType());
+            psMedia.setInt(4, movie.getReleaseYear());
+
+
+            var arr = psMedia.getConnection().createArrayOf("text", movie.getGenres().toArray(new String[0]));
+            psMedia.setArray(5, arr);
+
+            psMedia.setInt(6, movie.getAgeRestriction());
+            psMedia.setLong(7, mediaId);
+            psMedia.setLong(8, userId);
+
+            long updatedMediaId;
+            try (ResultSet rsMedia = psMedia.executeQuery()) {
+                if (!rsMedia.next()) {
+                    unitOfWork.rollbackTransaction();
+                    return null; // not found / not owner
+                }
+                updatedMediaId = rsMedia.getLong("media_id");
+            }
+
+            try (PreparedStatement psMovie = unitOfWork.prepareStatement(sqlMovie)) {
+                psMovie.setString(1, movie.getDirector());
+                psMovie.setInt(2, movie.getMovieLength());
+                psMovie.setLong(3, updatedMediaId);
+
+                int updated = psMovie.executeUpdate();
+                if (updated == 0) {
+                    unitOfWork.rollbackTransaction();
+                    return null;
+                }
+
+            }
+            unitOfWork.commitTransaction();
+            return movie;
+
+        } catch (SQLException ex) {
+            unitOfWork.rollbackTransaction();
+            throw new RuntimeException("Konnte Movie nicht updaten.", ex);
+        }
+    }
+
+    public Movie getMovieById(int mediaId) {
+        if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
+
+        String sql = """
+                    SELECT
+                    m.title,
+                    m.description,
+                    m.media_type,
+                    m.release_year,
+                    m.genres,
+                    m.age_restriction,
+                    mo.director,
+                    mo.movie_length
+                    FROM media m
+                    JOIN movie_details mo ON mo.movie_id = m.media_id
+                    WHERE m.media_id = ? AND m.media_type = 'movie'
+                """;
+
+        try (PreparedStatement ps = unitOfWork.prepareStatement(sql)) {
+            ps.setInt(1, mediaId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+                Movie movie = new Movie();
+                movie.setTitle(rs.getString("title"));
+                movie.setDescription(rs.getString("description"));
+                movie.setMediaType(rs.getString("media_type"));
+                movie.setReleaseYear(rs.getInt("release_year"));
+                movie.setAgeRestriction(rs.getInt("age_restriction"));
+
+                Array arr = rs.getArray("genres");
+                if (arr != null) {
+                    String[] gArr = (String[]) arr.getArray();
+                    movie.setGenres(Arrays.asList(gArr));
+                } else {
+                    movie.setGenres(List.of());
+                }
+
+                movie.setMovieLength(rs.getInt("movie_length"));
+                movie.setDirector(rs.getString("director"));
+
+                return movie;
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Game konnte nicht gefunden werden",e);
         }
     }
 }

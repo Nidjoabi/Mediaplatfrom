@@ -42,7 +42,6 @@ public class UserSqlRepository implements IUserRepository {
                     throw new SQLException("INSERT RETURNING lieferte keine Zeile.");
                 }
                 unitOfWork.commitTransaction();
-                User u = getUser(rs);
             }
         } catch (SQLException ex) {
             // 23505 = unique_violation (UNIQUE(email))
@@ -82,6 +81,66 @@ public class UserSqlRepository implements IUserRepository {
             }
         }catch (SQLException ex){
             throw new RuntimeException("Fehler beim Abrufen des Users mit username=" + username, ex);
+        }
+    }
+
+    @Override
+    public User getProfile(long userId) {
+        String sql = """
+                SELECT user_id, username, email
+                FROM users
+                WHERE  user_id = ?;
+        """;
+
+        try (PreparedStatement ps = unitOfWork.prepareStatement(sql)) {
+            ps.setLong(1, userId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (!rs.next()) {
+                    return null;
+                }
+
+                User u = new User();
+                u.setUser_id(rs.getInt("user_id"));     // oder setUserId(...) je nach deinem Model
+                u.setUsername(rs.getString("username"));
+                u.setEmail(rs.getString("email"));
+
+                return u;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("Konnte Profil nicht laden.", e);
+        }
+
+    }
+
+    @Override
+    public User updateProfile(long userId, User user){
+        String sql = """
+                UPDATE users
+                SET username = ?, password = ?, email = ?
+                WHERE user_id = ?;
+        """;
+        try(PreparedStatement ps = unitOfWork.prepareStatement(sql)){
+            ps.setString(1, user.getUsername());
+            ps.setString(2, user.getPassword());
+            ps.setString(3, user.getEmail());
+            ps.setLong(4,userId);
+
+            int updated = ps.executeUpdate();
+            if(updated == 0){
+                unitOfWork.rollbackTransaction();
+                return null;
+            }
+
+            unitOfWork.commitTransaction();
+            return user;
+
+
+
+        }catch (SQLException ex){
+            unitOfWork.rollbackTransaction();
+            throw new RuntimeException("Konnte Profil nicht updaten",ex);
         }
     }
 

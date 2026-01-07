@@ -26,4 +26,16 @@ public class GameService implements IGameService {
         if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
         return gameRepository.deleteGame(mediaId, userId);
     }
+
+    @Override
+    public Game updateGame(int mediaId,Game game, long userId) {
+        if(game == null) throw new IllegalArgumentException("game is null");
+        return gameRepository.updateGame(mediaId,game, userId);
+    }
+
+    @Override
+    public Game getGameById(int mediaId) {
+        if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
+        return gameRepository.getGameById(mediaId);
+    }
 }

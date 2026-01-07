@@ -1,8 +1,10 @@
 package service;
 
+import Modules.MediaDto;
 import persistence.IGameRepository;
 import persistence.IMediaRepository;
 
+import java.util.List;
 import java.util.Locale;
 
 public class MediaService implements IMediaService {
@@ -46,5 +48,18 @@ public class MediaService implements IMediaService {
             case "game" -> gameService.deleteGame(mediaId, userId);
             default -> false;
         };
+    }
+
+    @Override
+    public String getMediaType(int mediaId) {
+        if (mediaId <= 0) throw new IllegalArgumentException("mediaId is missing");
+        return mediaRepository.getMediaType(mediaId);
+    }
+
+    @Override
+    public List<MediaDto> searchMedia(String title, String genre, String mediaType,
+                                      Integer releaseYear, Integer ageRestriction, String sortBy){
+        return mediaRepository.searchMedia(title, genre, mediaType, releaseYear, ageRestriction, sortBy);
+
     }
 }
